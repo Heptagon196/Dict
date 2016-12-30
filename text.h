@@ -16,7 +16,11 @@ using namespace std;
 #define KEY_MOVEDOWN -200000
 #define KEY_MOVELEFT -300000
 #define KEY_MOVERIGHT -400000
+#ifdef linux
 #define KEY_BACKSPACE 127
+#else
+#define KEY_BACKSPACE 8
+#endif
 #define KEY_HOME -500000
 #define KEY_END -600000
 class TextBar {
@@ -24,9 +28,10 @@ class TextBar {
 		vector<string> history;
 		int x,y;
 		vector<char> buf;
+#ifdef linux
 		int GetCh() {
 			char ch=getch();
-			if (ch==27) {
+			if (ch==(char)27) {
 				ch=getch();
 				if (ch==91) {
 					ch=getch();
@@ -48,6 +53,29 @@ class TextBar {
 				return ch;
 			return 0;
 		}
+#else
+		int GetCh() {
+			char ch=getch();
+			if (ch==(char)224) {
+				ch=getch();
+				if (ch=='H')
+					return KEY_MOVEUP;
+				if (ch=='P')
+					return KEY_MOVEDOWN;
+				if (ch=='K')
+					return KEY_MOVERIGHT;
+				if (ch=='M')
+					return KEY_MOVELEFT;
+				if (ch=='G')
+					return KEY_HOME;
+				if (ch=='O')
+					return KEY_END;
+				return 0;
+			} else
+				return ch;
+			return 0;
+		}
+#endif
 	public:
 		void loca(int _x,int _y)  {
 			x=_x;y=_y;
@@ -56,7 +84,6 @@ class TextBar {
 			loca(_x,_y);
 		}
 		string Read() {
-#ifdef linux
 			int his=history.size();
 			history.push_back("");
 			string *ans=&history[history.size()-1];
@@ -128,11 +155,6 @@ class TextBar {
 			for (int i=0;i<ans->size();i++)
 				putchar(' ');
 			return (*ans);
-#else
-			string l;
-			cin >> l;
-			return l;
-#endif
 		}
 };
 
