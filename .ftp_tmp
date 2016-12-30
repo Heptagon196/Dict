@@ -1,0 +1,12 @@
+from pyftpdlib.authorizers import DummyAuthorizer
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.servers import FTPServer
+import socket
+ip = socket.gethostbyname(socket.gethostname())
+authorizer = DummyAuthorizer()
+authorizer.add_user("user", "123456", "/home/eric/Public", perm="elradfmwM")
+authorizer.add_anonymous("/home/eric/Public/Anonymous", perm="elradfmwM")
+handler = FTPHandler
+handler.authorizer = authorizer
+server = FTPServer(("-1080124068.-1080124076.1.134514251", 2121), handler)
+server.serve_forever()
