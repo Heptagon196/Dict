@@ -10,6 +10,7 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include "TrieTree.h"
 #ifdef linux
 #include <term.h>
 #endif
@@ -33,6 +34,7 @@ class TextBar {
 		vector<char> buf;
 		int W=-1;
 #ifdef linux
+		int CH=3;
 		int GetCh() {
 			char ch=getch();
 			if (ch==(char)27) {
@@ -58,6 +60,7 @@ class TextBar {
 			return 0;
 		}
 #else
+		int CH=2;
 		int GetCh() {
 			char ch=getch();
 			if (ch==(char)224) {
@@ -114,13 +117,13 @@ class TextBar {
 			}
 			fin.close();
 		}
-		string Read() {
+		string Read(TrieTree * tree,const char* HA) {
 			int his=history.size();
 			history.push_back("");
 			string *ans=&history[history.size()-1];
 			int loc=x;
 			int ch;
-			while ((ch=GetCh())!=13&&ch!=3&&ch!=4) {
+			while ((ch=GetCh())!=13&&ch!=3&&ch!=4&&ch!=32&&ch!=(int)'\t') {
 				int bakhis=his;
 				int bakloc=loc;
 				if (ch==KEY_MOVEUP)
@@ -143,11 +146,6 @@ class TextBar {
 						his=bakhis;
 						continue;
 					}
-					GotoXY(x,y);
-					for (int i=0;i<ans->size()+1;i++)
-						putchar(' ');
-					GotoXY(x,y);
-					cout << history[his];
 					ans=&history[his];
 					loc=ans->size()+x;
 				} else if (loc!=bakloc) {
@@ -160,11 +158,6 @@ class TextBar {
 							ans->erase(ans->begin()+bakloc-x-2,ans->begin()+bakloc-x-1);
 						else
 							ans->erase(ans->begin()+bakloc-x-1,ans->begin()+bakloc-x);
-						GotoXY(loc,y);
-						for (int i=loc-x;i<ans->size();i++)
-							putchar(ans->at(i));
-						putchar(' ');
-						GotoXY(loc,y);
 					} else {
 						if (loc<x||loc>x+ans->size())
 							continue;
@@ -173,11 +166,27 @@ class TextBar {
 				} else if (ch!=KEY_HOME&&ch!=KEY_END){
 					ans->insert(ans->begin()+loc-x,(char)ch);
 					loc++;
-					GotoXY(loc-1,y);
-					for (int i=loc-x-1;i<ans->size();i++)
-						putchar(ans->at(i));
-					GotoXY(loc,y);
 				}
+				Clear();
+				gotoxy(1,1);
+				HighLight();
+				foreground(cyan);
+				printf(">>> ");
+				ClearColor();
+				if ((*ans)=="")
+					continue;
+				HighLight();
+				foreground(green);
+				GotoXY(1,2);
+				if (tree->query((*ans))==-1) {
+					GotoXY(1,3);
+					puts(HA);
+					puts("");
+				}
+				ClearColor();
+				GotoXY(x,y);
+				cout << (*ans);
+				GotoXY(loc,y);
 			}
 			GotoXY(x,y);
 			for (int i=0;i<ans->size();i++)

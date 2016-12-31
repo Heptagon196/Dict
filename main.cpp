@@ -6,7 +6,7 @@
 #include <cstdlib>
 
 #ifdef linux
-#define SUFFIX ".txt"
+#define SUFFIX ".linux"
 #define HA "蛤？"
 #include "Conio.h"
 static vector<string> GetFile(const char * path,const char * grep) {
@@ -67,36 +67,26 @@ int main() {
 		fin.open("dic/"+dic[i]);
 		while (getline(fin,l,'\n')) {
 			getline(fin,l2,'\n');
-			x.add(convert(l),convert(l2));
+			x.add(convert(l),l2);
 		}
 		fin.close();
 	}
 	TextBar bar(5,1);
 	bar.ReadHistory(".dict_history");
 	Clear();
+	gotoxy(1,1);
+	HighLight();
+	foreground(cyan);
+	printf(">>> ");
+	ClearColor();
 	while (1) {
-		string l;
-		gotoxy(1,1);
-		HighLight();
-		foreground(cyan);
-		printf(">>> ");
-		ClearColor();
-		l=bar.Read();
+		gotoxy(5,1);
+		l=bar.Read(&x,HA);
 		if (l==""||l=="-q")
 			break;
-		HighLight();
-		foreground(green);
-		Clear();
-		gotoxy(1,2);
-		if (x.query(convert(l))==-1) {
-			puts("");
-			puts(HA);
-			puts("");
-		}
-		else
-			puts("");
 	}
 	Clear();
 	bar.SaveHistory(".dict_history");
+	putchar('\n');
 	return 0;
 }
