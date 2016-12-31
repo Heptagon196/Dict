@@ -72,6 +72,7 @@ int main() {
 		fin.close();
 	}
 	TextBar bar(5,1);
+	bar.ReadHistory(".dict_history");
 	Clear();
 	while (1) {
 		string l;
@@ -81,10 +82,8 @@ int main() {
 		printf(">>> ");
 		ClearColor();
 		l=bar.Read();
-		if (l==""||l=="-q") {
-			Clear();
-			return 0;
-		}
+		if (l==""||l=="-q")
+			break;
 		HighLight();
 		foreground(green);
 		Clear();
@@ -98,5 +97,6 @@ int main() {
 			puts("");
 	}
 	Clear();
+	bar.SaveHistory(".dict_history");
 	return 0;
 }

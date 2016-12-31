@@ -83,6 +83,24 @@ class TextBar {
 		TextBar(int _x,int _y) {
 			loca(_x,_y);
 		}
+		void SaveHistory(string filename) {
+			ofstream fout;
+			fout.open(filename);
+			for (int i=max(0,(int)history.size()-21);i<history.size();i++)
+				if (history[i]!="")
+					fout << history[i] << '|' << endl;
+			fout.close();
+		}
+		void ReadHistory(string filename) {
+			ifstream fin;
+			fin.open(filename);
+			string l;
+			while (getline(fin,l,'\n')) {
+				l.pop_back();
+				history.push_back(l);
+			}
+			fin.close();
+		}
 		string Read() {
 			int his=history.size();
 			history.push_back("");
