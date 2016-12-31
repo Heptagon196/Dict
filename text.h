@@ -10,6 +10,9 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#ifdef linux
+#include <term.h>
+#endif
 using namespace std;
 
 #define KEY_MOVEUP -100000
@@ -28,6 +31,7 @@ class TextBar {
 		vector<string> history;
 		int x,y;
 		vector<char> buf;
+		int W=-1;
 #ifdef linux
 		int GetCh() {
 			char ch=getch();
@@ -76,6 +80,9 @@ class TextBar {
 			return 0;
 		}
 #endif
+		inline void GotoXY(int loc_x,int loc_y) {
+			gotoxy((loc_x-1)%W+1,loc_y+(loc_x-1)/W);
+		}
 	public:
 		void loca(int _x,int _y)  {
 			x=_x;y=_y;
@@ -92,6 +99,12 @@ class TextBar {
 			fout.close();
 		}
 		void ReadHistory(string filename) {
+#ifdef linux
+			setupterm(NULL,fileno(stdout), (int *)0);
+			W=tigetnum("cols");
+#else
+			W=80;
+#endif
 			ifstream fin;
 			fin.open(filename);
 			string l;
@@ -130,10 +143,10 @@ class TextBar {
 						his=bakhis;
 						continue;
 					}
-					gotoxy(x,y);
+					GotoXY(x,y);
 					for (int i=0;i<ans->size()+1;i++)
 						putchar(' ');
-					gotoxy(x,y);
+					GotoXY(x,y);
 					cout << history[his];
 					ans=&history[his];
 					loc=ans->size()+x;
@@ -147,29 +160,29 @@ class TextBar {
 							ans->erase(ans->begin()+bakloc-x-2,ans->begin()+bakloc-x-1);
 						else
 							ans->erase(ans->begin()+bakloc-x-1,ans->begin()+bakloc-x);
-						gotoxy(x,y);
+						GotoXY(x,y);
 						for (int i=0;i<ans->size()+1;i++)
 							putchar(' ');
-						gotoxy(x,y);
+						GotoXY(x,y);
 						cout << (*ans);
-						gotoxy(loc,y);
+						GotoXY(loc,y);
 					} else {
 						if (loc<x||loc>x+ans->size())
 							continue;
-						gotoxy(loc,y);
+						GotoXY(loc,y);
 					}
 				} else if (ch!=KEY_HOME&&ch!=KEY_END){
 					ans->insert(ans->begin()+loc-x,(char)ch);
 					loc++;
-					gotoxy(x,y);
+					GotoXY(x,y);
 					for (int i=0;i<ans->size();i++)
 						putchar(' ');
-					gotoxy(x,y);
+					GotoXY(x,y);
 					cout << (*ans);
-					gotoxy(loc,y);
+					GotoXY(loc,y);
 				}
 			}
-			gotoxy(x,y);
+			GotoXY(x,y);
 			for (int i=0;i<ans->size();i++)
 				putchar(' ');
 			return (*ans);
