@@ -55,7 +55,7 @@ string convert(string &x) {
 
 int main() {
 #ifndef linux
-	system("color F0");
+	foreground(white);
 	system("cls");
 #endif
 	ifstream fin;

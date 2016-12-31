@@ -84,7 +84,7 @@ int color(WORD a,WORD b)
 }
 
 void foreground(WORD a) {
-	color(a,white);
+	color(a,black);
 }
 
 double pro_time()

@@ -160,11 +160,10 @@ class TextBar {
 							ans->erase(ans->begin()+bakloc-x-2,ans->begin()+bakloc-x-1);
 						else
 							ans->erase(ans->begin()+bakloc-x-1,ans->begin()+bakloc-x);
-						GotoXY(x,y);
-						for (int i=0;i<ans->size()+1;i++)
-							putchar(' ');
-						GotoXY(x,y);
-						cout << (*ans);
+						GotoXY(loc,y);
+						for (int i=loc-x;i<ans->size();i++)
+							putchar(ans->at(i));
+						putchar(' ');
 						GotoXY(loc,y);
 					} else {
 						if (loc<x||loc>x+ans->size())
@@ -174,11 +173,9 @@ class TextBar {
 				} else if (ch!=KEY_HOME&&ch!=KEY_END){
 					ans->insert(ans->begin()+loc-x,(char)ch);
 					loc++;
-					GotoXY(x,y);
-					for (int i=0;i<ans->size();i++)
-						putchar(' ');
-					GotoXY(x,y);
-					cout << (*ans);
+					GotoXY(loc-1,y);
+					for (int i=loc-x-1;i<ans->size();i++)
+						putchar(ans->at(i));
 					GotoXY(loc,y);
 				}
 			}
