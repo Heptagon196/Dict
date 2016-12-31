@@ -33,7 +33,11 @@ class TrieTree {
 				if (p->word==-1)
 					return -1;
 				if (p->word==1&&i==str.length()-1) {
-					for (int i=0;i<p->info.size()-1;i++)
+					if (p->info.size()<2||(p->info[0]!='\\'||p->info[1]!='n'))
+						puts("");
+					if (p->info.size()!=0&&p->info[0]!=' '&&p->info[0]!='\\')
+						putchar(p->info[0]);
+					for (int i=1-((p->info[0]=='\\')?1:0);i<p->info.size()-1;i++)
 						if (p->info[i]=='\\'&&p->info[i+1]=='n')
 							putchar('\n'),i++;
 						else
