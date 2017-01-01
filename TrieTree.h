@@ -9,7 +9,11 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#ifdef linux
 #include "Conio.h"
+#else
+#include "Conio_Windows.h"
+#endif
 using namespace std;
 class TrieTree {
 	private:
