@@ -10,10 +10,10 @@
 #include <cstdlib>
 #include <string>
 #include <vector>
+#include <sys/types.h>
+#include <sys/ioctl.h>
+#include <termios.h>
 #include "TrieTree.h"
-#ifdef linux
-#include <term.h>
-#endif
 using namespace std;
 
 #define KEY_MOVEUP -100000
@@ -103,8 +103,9 @@ class TextBar {
 		}
 		void ReadHistory(string filename) {
 #ifdef linux
-			setupterm(NULL,fileno(stdout), (int *)0);
-			W=tigetnum("cols");
+            struct winsize size;
+            ioctl(STDIN_FILENO, TIOCGWINSZ, &size);
+            W=size.ws_col;
 #else
 			W=80;
 #endif
